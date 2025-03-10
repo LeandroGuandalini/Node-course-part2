@@ -4,56 +4,22 @@ const router = express.Router();
 
 let {people} = require('../data');
 
-router.get('/', (req, res) => {
-  res.status(200).json({success:true, data:people})
-})
+const {
+  getPeople,
+  createPerson,
+  createPersonInsomnia,
+  updatePerson,
+  deletePerson
+} = require('../controllers/people')
 
-router.post('/', (req,res) => {
-  const {name} = req.body;
-  if (!name) {
-    return res.status(400).json({sucess:false,msg:"please provide name value"})
-  } 
-  res.status(201).json({sucess: true, person: name})
-})
+// router.get('/', getPeople)
+// router.post('/', createPerson)
+// router.post('/insomnia', createPersonInsomnia)
+// router.put('/:id', updatePerson)
+// router.delete('/:id', deletePerson)
 
-router.post('/insomnia', (req,res) => {
-  const {name} = req.body;
-  if (!name) {
-    return res.status(400).json({sucess:false,msg:"please provide name value"})
-  } 
-  res.status(201).json({sucess: true, person: name})
-})
-
-
-router.put('/:id', (req, res) => {
-  const {id} = req.params
-  const {name} = req.body
-
-  const person = people.find((person) => person.id === Number(id))
-
-  if (!person) {
-    return res
-      .status(404)
-      .json({success: false, msg: `no person with id ${id}`})
-  }
-  const newPeople = people.map((person) => {
-    if((person.id) === Number(id)){
-      person.name = name
-    }
-    return person
-  })
-  res.status(200).json({success: true, data: newPeople})
-})
-
-router.delete('/:id', (req, res) => {
-  const person = people.find((person) => person.id === Number(req.params.id))
-  if (!person) {
-    return res
-      .status(404)
-      .json({success: false, msg: `no person with id ${id}`})
-  }
-  const newPeople = people.filter((person) => person.id !== Number(req.params.id));
-  return res.status(200).json({success: true, data: newPeople})
-})
+router.route('/').get(getPeople).post(createPerson);
+router.route('/insomnia').post(createPersonInsomnia);
+router.route('/:id').put(updatePerson).delete(deletePerson);
 
 module.exports = router
